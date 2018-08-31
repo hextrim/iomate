@@ -56,7 +56,7 @@ MAIL_PORT = 587
 MAIL_USE_TLS = True
 MAIL_USE_SSL = False
 MAIL_USERNAME = "admin@hextrim.com"
-MAIL_PASSWORD = "dupajeza123"
+MAIL_PASSWORD = "***"
 #MAIL_DEFAULT_SENDER
 
 # Flask-User settings
