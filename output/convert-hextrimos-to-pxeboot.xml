@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.5.2">
+      <gitLabConnection></gitLabConnection>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+cd /opt/iomate/isos/hextrimos
+sudo livecd-iso-to-pxeboot hextrimos.iso</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+cd /opt/iomate/isos/hextrimos
+sudo mv -f tftpboot/vmlinuz0 .
+sudo mv -f tftpboot/initrd0.img .
+sudo rm -rf tftpboot/
+</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+sudo cobbler distro add --name=hextrimos --kernel=/opt/iomate/isos/hextrimos/vmlinuz0 --initrd=/opt/iomate/isos/hextrimos/initrd0.img
+sudo cobbler distro edit --name=hextrimos --kopts=&apos;root=live:/hextrimos.iso rootfstype=iso9660 rootflags=loop !text !lang !ksdevice&apos;
+sudo cobbler profile add --name=hextrimos --distro=hextrimos</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+sudo cobbler sync</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>

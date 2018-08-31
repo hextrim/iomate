@@ -1,0 +1,22 @@
+ 
+no
+
+enable
+
+conf t 
+
+## PORT CONFIGURATION
+interface FastEthernet0/13
+ description ht-srv-01 to CARD-EMB-NIC1 inside
+ switchport mode access
+ switchport access vlan 123
+
+## END of PORT CONFIGURATION
+
+
+
+end
+
+write mem
+
+exit

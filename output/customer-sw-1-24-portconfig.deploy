@@ -1,0 +1,164 @@
+ 
+no
+
+enable
+
+conf t 
+
+## VLAN CONFIGURATION
+
+vlan 100
+name outside
+
+vlan 123
+name inside
+
+vlan 222
+name HT-PROD
+
+vlan 432
+name HT-DB
+
+vlan 212
+name HT-LAN
+
+## END VLAN CONFIGURATION
+
+## PORT CONFIGURATION
+
+interface FastEthernet0/1
+ description iomate to iomate-NIC2 inside
+ switchport mode access
+ switchport access vlan 123
+
+
+
+interface FastEthernet0/2
+ description ht-srv-01 to CARD-EMB-NIC1 inside
+ switchport mode access
+ switchport access vlan 123
+
+interface FastEthernet0/3
+ description ht-srv-01 to CARD-EMB-NIC2 
+ switchport mode trunk
+ 
+
+interface FastEthernet0/4
+ description ht-esxi-3 to CARD-EMB-NIC1 HT-PROD
+ switchport mode access
+ switchport access vlan 222
+
+interface FastEthernet0/5
+ description ht-esxi-3 to CARD-ADD-NIC1 HT-LAN
+ switchport mode access
+ switchport access vlan 212
+
+interface FastEthernet0/6
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/7
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/8
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/9
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/10
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/11
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/12
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/13
+ description ht-srv-01 to CARD-EMB-NIC1 inside
+ switchport mode access
+ switchport access vlan 123
+
+interface FastEthernet0/14
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/15
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/16
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/17
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/18
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/19
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/20
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/21
+ description None to None 
+ no switchport mode
+ 
+
+interface FastEthernet0/22
+ description None to None 
+ no switchport mode
+ 
+
+
+interface Port-channel1
+ description HEXTRIM backplane [backplane]
+ switchport mode trunk
+
+
+interface FastEthernet0/23
+ description Uplink to None/None
+ switchport mode trunk
+ channel-group 1 mode desirable
+
+interface FastEthernet0/24
+ description Uplink to None/None
+ switchport mode trunk
+ channel-group 1 mode desirable
+
+## END of PORT CONFIGURATION
+
+
+end
+
+write mem
+
+exit

@@ -1,0 +1,153 @@
+ 
+no
+
+enable
+
+conf t 
+
+## VLAN CONFIGURATION
+
+vlan 100
+name MGMT
+
+## END VLAN CONFIGURATION
+
+## PORT CONFIGURATION
+
+interface GigabitEthernet1/0/1
+ description None to None 
+ no switchport mode
+ 
+
+
+
+interface GigabitEthernet1/0/2
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/3
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/4
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/5
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/6
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/7
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/8
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/9
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/10
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/11
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/12
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/13
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/14
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/15
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/16
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/17
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/18
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/19
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/20
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/21
+ description None to None 
+ no switchport mode
+ 
+
+interface GigabitEthernet1/0/22
+ description None to None 
+ no switchport mode
+ 
+
+
+interface Port-channel1
+ description HEXTRIM backplane [backplane]
+ switchport mode trunk
+
+
+interface GigabitEthernet1/0/23
+ description Uplink to None/None
+ switchport mode trunk
+ channel-group 1 mode desirable
+
+interface GigabitEthernet1/0/24
+ description Uplink to None/None
+ switchport mode trunk
+ channel-group 1 mode desirable
+
+## END of PORT CONFIGURATION
+
+
+
+end
+
+write mem
+
+exit

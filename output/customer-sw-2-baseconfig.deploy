@@ -1,0 +1,66 @@
+
+no
+
+enable
+
+conf t
+
+hostname ht-sw-4
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree uplinkfast
+
+service password-encryption
+
+service timestamps log datetime
+service timestamps debug uptime
+
+username rancid secret 5
+!
+enable secret
+line vty 0 15
+password
+login
+line console 0
+password
+login
+  synchronous
+
+## VLAN CONFIGURATION
+vlan 100
+name MGMT
+## END VLAN CONFIGURATION
+
+interface Vlan100
+ip address 192.168.50.104 255.255.255.0
+!
+ip default-gateway 192.168.50.254
+ip http server
+ip http secure-server
+   
+snmp-server community  RO
+snmp-server location DC2 Colo1 N3
+snmp-server contact Wojciech Orlowski
+
+ntp server  
+ntp server  
+
+aaa new-model
+
+ip domain-name hextrim.com
+crypto key generate rsa general-keys modulus 1024
+
+aaa authentication login default local group tacacs+ line
+aaa authentication enable default enable
+aaa accounting exec default start-stop group tacacs+
+aaa accounting commands 15 default start-stop group tacacs+
+aaa accounting connection default start-stop group tacacs+
+aaa accounting system default start-stop group tacacs+
+
+errdisable recovery cause all
+
+end
+
+write mem
+
+exit

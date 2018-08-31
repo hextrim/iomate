@@ -1,0 +1,22 @@
+ 
+no
+
+enable
+
+conf t 
+
+## PORT CONFIGURATION
+interface GigabitEthernet1/0/8
+ description None to None 
+ no switchport mode
+ 
+
+## END of PORT CONFIGURATION
+
+
+
+end
+
+write mem
+
+exit

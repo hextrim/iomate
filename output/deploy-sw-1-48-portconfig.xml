@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.4.5">
+      <gitLabConnection></gitLabConnection>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash
+sudo setfacl -m user:jenkins:rwx /dev/ttyUSB0
+sudo setfacl -m user:jenkins:rw /var/www/iomate/serial_switch_deploy.log
+sudo setfacl -m user:jenkins:rw /var/www/iomate/serial_switch_erase.log
+sudo setfacl -m user:jenkins:rw /var/www/iomate/serial_switch_reboot.log
+cd /var/www/iomate
+source iomateenv/bin/activate
+python /var/www/iomate/serial_deploy_sw_with_erase.py output/customer-sw-1-48-portconfig.deploy /dev/ttyUSB0
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
