@@ -1,0 +1,65 @@
+
+no
+
+enable
+
+conf t
+
+hostname {{ customer_sw_2 }}
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree uplinkfast
+
+service password-encryption
+
+service timestamps log datetime
+service timestamps debug uptime
+
+enable secret
+line vty 0 15
+password
+login
+line console 0
+password
+login
+  synchronous
+
+## VLAN CONFIGURATION
+vlan {{ mgmt_vlan_id }}
+name MGMT
+## END VLAN CONFIGURATION
+
+interface Vlan{{ mgmt_vlan_id }}
+ip address {{ customer_sw_2_mgmt_ipadress }} {{ customer_sw_2_mgmt_subnet }}
+!
+ip default-gateway {{ customer_sw_2_mgmt_gateway }}
+ip http server
+ip http secure-server
+   
+snmp-server community RO
+snmp-server location DC2 Colo1 N3
+snmp-server contact Wojciech Orlowski
+
+ntp server  
+ntp server  
+
+aaa new-model
+
+
+ip domain-name hextrim.com
+crypto key generate rsa general-keys modulus 1024
+
+aaa authentication login default local group tacacs+ line
+aaa authentication enable default enable
+aaa accounting exec default start-stop group tacacs+
+aaa accounting commands 15 default start-stop group tacacs+
+aaa accounting connection default start-stop group tacacs+
+aaa accounting system default start-stop group tacacs+
+
+errdisable recovery cause all
+
+end
+
+write mem
+
+exit

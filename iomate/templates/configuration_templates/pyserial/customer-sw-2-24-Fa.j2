@@ -1,0 +1,219 @@
+
+no
+
+enable
+
+conf t
+
+hostname {{ customer_sw_2 }}
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree uplinkfast
+
+service password-encryption
+
+service timestamps log datetime
+service timestamps debug uptime
+
+!
+enable secret  
+line vty 0 15
+password  
+login
+line console 0
+password  
+login
+logging synchronous
+
+## VLAN CONFIGURATION
+vlan {{ mgmt_vlan_id }}
+name MGMT
+
+vlan {{ vmotion_vlan_id }}
+name vMotion
+
+vlan {{ iscsi_vlan_id }}
+name iSCSI
+
+vlan {{ outside_vlan_id }}
+name outside
+
+vlan {{ customer_defined_vlan }}
+name {{ customer_defined_vlan_name }}
+## END VLAN CONFIGURATION
+
+## FIREWALL CABLING
+interface FastEthernet0/1
+ description Uplink to {{ customer_fw_2 }} Gi0/1 [mgmt] {{ mgmt_vlan_id }}
+ switchport access vlan {{ mgmt_vlan_id }}
+ switchport mode access
+
+interface FastEthernet0/2
+ description Uplink to {{ customer_fw_2 }} Gi0/2 [prod] TRUNK {{ customer_defined_vlan }}
+ switchport mode trunk
+ switchport trunk allowed vlan {{ customer_defined_vlan }}
+
+interface FastEthernet0/3
+ description {{ customer_fw_2 }} reserved
+ switchport mode access
+ shutdown
+
+interface FastEthernet0/4
+ description {{ customer_fw_2 }} reserved
+ switchport mode access
+ shutdown
+## END FIREWALL CABLING
+
+## ESXi HOST CABLING
+
+## esxi-1
+interface FastEthernet0/5
+ description {{ customer_esxi_1 }} CARD-ADD NIC1 [mgmt] {{ mgmt_vlan_id }}
+ switchport access vlan {{ mgmt_vlan_id }}
+ switchport mode access
+!
+interface FastEthernet0/6
+ description {{ customer_esxi_1 }} CARD-ADD NIC2 [vmotion] {{ vmotion_vlan_id }}
+ switchport access vlan {{ vmotion_vlan_id }}
+ switchport mode access
+!
+interface FastEthernet0/7
+ description {{ customer_esxi_1 }} CARD-ADD NIC3 [prod] {{ customer_defined_vlan }}
+ switchport mode trunk
+ switchport trunk allowed vlan {{ customer_defined_vlan }}
+!
+interface FastEthernet0/8
+ description {{ customer_esxi_1 }} CARD-ADD NIC4 [iscsi] {{ iscsi_vlan_id }}
+ switchport access vlan {{ iscsi_vlan_id }}
+ switchport mode access
+!
+## end esxi-1
+
+## esxi-2
+interface FastEthernet0/9
+ description {{ customer_esxi_2 }} CARD-ADD NIC1 [mgmt] {{ mgmt_vlan_id }}
+ switchport access vlan {{ mgmt_vlan_id }}
+ switchport mode access
+!
+interface FastEthernet0/10
+ description {{ customer_esxi_2 }} CARD-ADD NIC2 [vmotion] {{ vmotion_vlan_id }}
+ switchport access vlan {{ vmotion_vlan_id }}
+ switchport mode access
+!
+interface FastEthernet0/11
+ description {{ customer_esxi_2 }} CARD-ADD NIC3 [prod] {{ customer_defined_vlan }}
+ switchport mode trunk
+ switchport trunk allowed vlan {{ customer_defined_vlan }}
+!
+interface FastEthernet0/12
+ description {{ customer_esxi_2 }} CARD-ADD NIC4 [iscsi] {{ iscsi_vlan_id }}
+ switchport access vlan {{ iscsi_vlan_id }}
+ switchport mode access
+!
+## end esxi-2
+
+## esxi-3
+interface FastEthernet0/13
+ description {{ customer_esxi_3 }} CARD-ADD NIC1 [mgmt] {{ mgmt_vlan_id }}
+ switchport access vlan {{ mgmt_vlan_id }}
+ switchport mode access
+!
+interface FastEthernet0/14
+ description {{ customer_esxi_3 }} CARD-ADD NIC2 [vmotion] {{ vmotion_vlan_id }}
+ switchport access vlan {{ vmotion_vlan_id }}
+ switchport mode access
+!
+interface FastEthernet0/15
+ description {{ customer_esxi_3 }} CARD-ADD NIC3 [prod] {{ customer_defined_vlan }}
+ switchport mode trunk
+ switchport trunk allowed vlan {{ customer_defined_vlan }}
+!
+interface FastEthernet0/16
+ description {{ customer_esxi_3 }} CARD-ADD NIC4 [iscsi] {{ iscsi_vlan_id }}
+ switchport access vlan {{ iscsi_vlan_id }}
+ switchport mode access
+!
+## end esxi-3
+
+
+## END ESXi HOST CABLING ##
+
+## iSCSI EMC SAN
+## SPA
+interface FastEthernet0/18
+ description {{ customer_san_1 }} SPB 1Gbps port1 [mgmt] {{ mgmt_vlan_id }}
+ switchport access vlan {{ mgmt_vlan_id }}
+ switchport mode access
+!
+interface FastEthernet0/19
+ description {{ customer_san_1 }} SPB 10Gbps port2 [iscsi] {{ iscsi_vlan_id }}
+ switchport access vlan {{ iscsi_vlan_id }}
+ switchport mode access
+!
+interface FastEthernet0/20
+ description {{ customer_san_1 }} SPB 10Gbps port3 [iscsi] {{ iscsi_vlan_id }}
+ switchport access vlan {{ iscsi_vlan_id }}
+ switchport mode access
+!
+## end SPA
+## end iSCSI EMC SAN
+
+interface FastEthernet0/21
+ description Uplink to {{ customer_fw_2 }} Gi0/0 [outside] {{ outside_vlan_id }}
+ switchport mode access
+ switchport access vlan {{ outside_vlan_id }}
+
+interface FastEthernet0/22
+ description Uplink to CORE-HSRP [outside] {{ outside_vlan_id }}
+ switchport mode access
+ switchport access vlan {{ outside_vlan_id }}
+
+interface Port-channel1
+ description {{ customer }} backplane [backplane]
+ switchport mode trunk
+ switchport trunk allowed vlan {{ mgmt_vlan_id }},{{ vmotion_vlan_id }},{{ iscsi_vlan_id }},{{ customer_defined_vlan }},{{ outside_vlan_id }}
+
+interface FastEthernet0/23
+ description Uplink to {{ customer_sw_1 }}/23
+ switchport mode trunk
+ channel-group 1 mode desirable
+!
+interface FastEthernet0/23
+ description Uplink to {{ customer_sw_1 }}/24
+ switchport mode trunk
+ channel-group 1 mode desirable
+
+interface Vlan{{ mgmt_vlan_id }}
+ ip address {{ customer_sw_2_mgmt_ipadress }} {{ customer_sw_2_mgmt_subnet }}
+!
+ip default-gateway {{ customer_sw_2_mgmt_gateway }}
+ip http server
+ip http secure-server
+logging  
+snmp-server community   RO
+snmp-server location DC2 Colo1 N3
+snmp-server contact  
+
+ntp server  
+ntp server  
+
+aaa new-model
+
+
+ip domain-name hextrim.com
+crypto key generate rsa general-keys modulus 1024
+
+aaa authentication login default local group tacacs+ line
+aaa authentication enable default enable
+aaa accounting exec default start-stop group tacacs+
+aaa accounting commands 15 default start-stop group tacacs+
+aaa accounting connection default start-stop group tacacs+
+aaa accounting system default start-stop group tacacs+
+
+errdisable recovery cause all
+
+end
+
+write mem
+
+exit

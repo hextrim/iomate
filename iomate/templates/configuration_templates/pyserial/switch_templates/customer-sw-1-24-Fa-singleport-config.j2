@@ -1,0 +1,31 @@
+ 
+no
+
+enable
+
+conf t 
+
+## PORT CONFIGURATION
+interface FastEthernet0/{{ port.id }}
+ description {{ port.devicename }} to {{ port.deviceport }} {{ port.sw124vlansbackref.name }}
+ {% if port.portmode == 'access' -%}
+ switchport mode access
+ {% elif port.portmode == 'trunk' -%}
+ switchport mode trunk
+ {% else -%}
+ no switchport mode
+ {% endif %}
+ {%- if port.portmode == 'access' -%}
+ switchport access vlan {{ port.sw124vlansbackref.vlanid }}
+ {%- else -%}
+ {% endif %}
+
+## END of PORT CONFIGURATION
+
+
+
+end
+
+write mem
+
+exit

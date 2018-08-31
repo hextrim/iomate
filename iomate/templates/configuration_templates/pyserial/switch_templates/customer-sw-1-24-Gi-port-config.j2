@@ -1,0 +1,66 @@
+ 
+no
+
+enable
+
+conf t 
+
+## VLAN CONFIGURATION
+{% for vlan in vlans %}
+vlan {{ vlan.vlanid }}
+name {{ vlan.name }}
+{% endfor %}
+## END VLAN CONFIGURATION
+
+## PORT CONFIGURATION
+{% for port in ports[0:1] %}
+interface GigabitEthernet1/0/{{ port.id }}
+ description {{ port.devicename }} to {{ port.deviceport }} {{ port.sw124vlansbackref.name }}
+ {% if port.portmode == 'access' -%}
+ switchport mode access
+ {% elif port.portmode == 'trunk' -%}
+ switchport mode trunk
+ {% else -%}
+ no switchport mode
+ {% endif %}
+ {%- if port.portmode == 'access' -%}
+ switchport access vlan {{ port.sw124vlansbackref.vlanid }}
+ {%- else -%}
+ {% endif %}
+{% endfor %}
+
+{% for port in ports[1:22] %}
+interface GigabitEthernet1/0/{{ port.id }}
+ description {{ port.devicename }} to {{ port.deviceport }} {{ port.sw124vlansbackref.name }}
+ {% if port.portmode == 'access' -%}
+ switchport mode access
+ {% elif port.portmode == 'trunk' -%}
+ switchport mode trunk
+ {% else -%}
+ no switchport mode
+ {% endif %}
+ {%- if port.portmode == 'access' -%}
+ switchport access vlan {{ port.sw124vlansbackref.vlanid }}
+ {%- else -%}
+ {% endif %}
+{% endfor %}
+
+interface Port-channel1
+ description {{ customer }} backplane [backplane]
+ switchport mode trunk
+
+{% for port in ports[22:24] %}
+interface GigabitEthernet1/0/{{ port.id }}
+ description Uplink to {{ port.devicename }}/{{ port.deviceport }}
+ switchport mode trunk
+ channel-group 1 mode desirable
+{% endfor %}
+## END of PORT CONFIGURATION
+
+
+
+end
+
+write mem
+
+exit

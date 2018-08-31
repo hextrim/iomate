@@ -1,0 +1,219 @@
+send \r
+send no\r
+send \r
+send enable\r
+send \r
+send conf t\r
+send hostname {{ customer_sw_2 }}\r
+send spanning-tree mode rapid-pvst\r
+send spanning-tree extend system-id\r
+send spanning-tree uplinkfast\r
+send \r
+send service password-encryption\r
+send \r
+send service timestamps log datetime\r
+send service timestamps debug uptime\r
+send \r
+send !\r
+send enable secret  \r
+send line vty 0 15\r
+send password  \r
+send login\r
+send line console 0\r
+send password  \r
+send login\r
+send   synchronous\r
+send \r
+## VLAN CONFIGURATION
+send vlan {{ mgmt_vlan_id }}\r
+send name MGMT\r
+send \r
+send vlan {{ vmotion_vlan_id }}\r
+send name vMotion\r
+send \r
+send vlan {{ iscsi_vlan_id }}\r
+send name iSCSI\r
+send \r
+send vlan {{ outside_vlan_id }}\r
+send name outside\r
+send \r
+send vlan {{ customer_defined_vlan }}\r
+send name {{ customer_defined_vlan_name }}\r
+## END VLAN CONFIGURATION
+send \r
+## FIREWALL CABLING
+send interface FastEthernet0/1\r
+send  description Uplink to {{ customer_fw_2 }} Gi0/1 [mgmt] {{ mgmt_vlan_id }}\r
+send  switchport access vlan {{ mgmt_vlan_id }}\r
+send  switchport mode access\r
+send \r
+send interface FastEthernet0/2\r
+send  description Uplink to {{ customer_fw_2 }} Gi0/2 [prod] TRUNK {{ customer_defined_vlan }}\r
+send  switchport mode trunk\r
+send  switchport trunk allowed vlan {{ customer_defined_vlan }}\r
+send \r
+send interface FastEthernet0/3\r
+send  description {{ customer_fw_2 }} reserved\r
+send  switchport mode access\r
+send  shutdown\r
+send \r
+send interface FastEthernet0/4\r
+send  description {{ customer_fw_2 }} reserved\r
+send  switchport mode access\r
+send  shutdown\r
+## END FIREWALL CABLING
+send \r
+## ESXi HOST CABLING
+send \r
+## esxi-1
+send interface FastEthernet0/5\r
+send  description {{ customer_esxi_1 }} CARD-ADD NIC1 [mgmt] {{ mgmt_vlan_id }}\r
+send  switchport access vlan {{ mgmt_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+send interface FastEthernet0/6\r
+send  description {{ customer_esxi_1 }} CARD-ADD NIC2 [vmotion] {{ vmotion_vlan_id }}\r
+send  switchport access vlan {{ vmotion_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+send interface FastEthernet0/7\r
+send  description {{ customer_esxi_1 }} CARD-ADD NIC3 [prod] {{ customer_defined_vlan }}\r
+send  switchport mode trunk\r
+send  switchport trunk allowed vlan {{ customer_defined_vlan }}\r
+send !\r
+send interface FastEthernet0/8\r
+send  description {{ customer_esxi_1 }} CARD-ADD NIC4 [iscsi] {{ iscsi_vlan_id }}\r
+send  switchport access vlan {{ iscsi_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+## end esxi-1
+send \r
+## esxi-2
+send interface FastEthernet0/9\r
+send  description {{ customer_esxi_2 }} CARD-ADD NIC1 [mgmt] {{ mgmt_vlan_id }}\r
+send  switchport access vlan {{ mgmt_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+send interface FastEthernet0/10\r
+send  description {{ customer_esxi_2 }} CARD-ADD NIC2 [vmotion] {{ vmotion_vlan_id }}\r
+send  switchport access vlan {{ vmotion_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+send interface FastEthernet0/11\r
+send  description {{ customer_esxi_2 }} CARD-ADD NIC3 [prod] {{ customer_defined_vlan }}\r
+send  switchport mode trunk\r
+send  switchport trunk allowed vlan {{ customer_defined_vlan }}\r
+send !\r
+send interface FastEthernet0/12\r
+send  description {{ customer_esxi_2 }} CARD-ADD NIC4 [iscsi] {{ iscsi_vlan_id }}\r
+send  switchport access vlan {{ iscsi_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+## end esxi-2
+send \r
+## esxi-3
+send interface FastEthernet0/13\r
+send  description {{ customer_esxi_3 }} CARD-ADD NIC1 [mgmt] {{ mgmt_vlan_id }}\r
+send  switchport access vlan {{ mgmt_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+send interface FastEthernet0/14\r
+send  description {{ customer_esxi_3 }} CARD-ADD NIC2 [vmotion] {{ vmotion_vlan_id }}\r
+send  switchport access vlan {{ vmotion_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+send interface FastEthernet0/15\r
+send  description {{ customer_esxi_3 }} CARD-ADD NIC3 [prod] {{ customer_defined_vlan }}\r
+send  switchport mode trunk\r
+send  switchport trunk allowed vlan {{ customer_defined_vlan }}\r
+send !\r
+send interface FastEthernet0/16\r
+send  description {{ customer_esxi_3 }} CARD-ADD NIC4 [iscsi] {{ iscsi_vlan_id }}\r
+send  switchport access vlan {{ iscsi_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+## end esxi-3
+send \r
+send \r
+## END ESXi HOST CABLING ##
+send \r
+## iSCSI EMC SAN
+## SPA
+send interface FastEthernet0/18\r
+send  description {{ customer_san_1 }} SPB 1Gbps port1 [mgmt] {{ mgmt_vlan_id }}\r
+send  switchport access vlan {{ mgmt_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+send interface FastEthernet0/19\r
+send  description {{ customer_san_1 }} SPB 10Gbps port2 [iscsi] {{ iscsi_vlan_id }}\r
+send  switchport access vlan {{ iscsi_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+send interface FastEthernet0/20\r
+send  description {{ customer_san_1 }} SPB 10Gbps port3 [iscsi] {{ iscsi_vlan_id }}\r
+send  switchport access vlan {{ iscsi_vlan_id }}\r
+send  switchport mode access\r
+send !\r
+## end SPA
+## end iSCSI EMC SAN
+send \r
+send interface FastEthernet0/21\r
+send  description Uplink to {{ customer_fw_2 }} Gi0/0 [outside] {{ outside_vlan_id }}\r
+send  switchport mode access\r
+send  switchport access vlan {{ outside_vlan_id }}\r
+send \r
+send interface FastEthernet0/22\r
+send  description Uplink to CORE-HSRP [outside] {{ outside_vlan_id }}\r
+send  switchport mode access\r
+send  switchport access vlan {{ outside_vlan_id }}\r
+send \r
+send interface Port-channel1\r
+send  description {{ customer }} backplane [backplane]\r
+send  switchport mode trunk\r
+send  switchport trunk allowed vlan {{ mgmt_vlan_id }},{{ vmotion_vlan_id }},{{ iscsi_vlan_id }},{{ customer_defined_vlan }},{{ outside_vlan_id }}\r
+send \r
+send interface FastEthernet0/23\r
+send  description Uplink to {{ customer_sw_1 }}/23\r
+send  switchport mode trunk\r
+send  channel-group 1 mode desirable\r
+send !\r
+send interface FastEthernet0/24\r
+send  description Uplink to {{ customer_sw_1 }}/24\r
+send  switchport mode trunk\r
+send  channel-group 1 mode desirable\r
+send \r
+send interface Vlan{{ mgmt_vlan_id }}\r
+send  ip address {{ customer_sw_2_mgmt_ipadress }} {{ customer_sw_2_mgmt_subnet }}\r
+send !\r
+send ip default-gateway {{ customer_sw_2_mgmt_gateway }}\r
+send ip http server\r
+send ip http secure-server\r
+send    \r
+send snmp-server community   RO\r
+send snmp-server location DC2 Colo1 N3\r
+send snmp-server contact  \r
+send \r
+send ntp server  \r
+send ntp server  \r
+send \r
+send aaa new-model\r
+send \r
+send aaa authentication login default group tacacs+ local line\r
+send aaa authentication enable default group tacacs+ enable\r
+send aaa accounting exec default start-stop group tacacs+\r
+send aaa accounting commands 15 default start-stop group tacacs+\r
+send aaa accounting connection default start-stop group tacacs+\r
+send aaa accounting system default start-stop group tacacs+\r
+send \r
+send \r
+send errdisable recovery cause all\r
+send \r
+send end\r
+send \r
+send write mem\r
+send \r
+send \r
+send \r
+send exit\r
+! killall minicom
+
